@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BaiTapQLSV.Models
+namespace qlsinhvien.Models
 {
     [Table("PhanCongGiangDay")]
     public class PhanCongGiangDay
@@ -19,20 +19,19 @@ namespace BaiTapQLSV.Models
         [Required]
         public int MaLop { get; set; }
 
-        [StringLength(20)]
-        public string? HocKy { get; set; } // HK1, HK2
+        [Required]
+        public int MaHocKy { get; set; }
 
-        [StringLength(20)]
-        public string? NamHoc { get; set; } // 2024-2025
-
-        // Navigation properties
         [ForeignKey("MaGiangVien")]
-        public GiangVien? GiangVien { get; set; }
+        public virtual TaiKhoan? GiangVien { get; set; }
 
         [ForeignKey("MaMonHoc")]
-        public MonHoc? MonHoc { get; set; }
+        public virtual MonHoc? MonHoc { get; set; }
 
         [ForeignKey("MaLop")]
-        public Lop? Lop { get; set; }
+        public virtual LopHoc? LopHoc { get; set; }
+
+        [ForeignKey("MaHocKy")]
+        public virtual HocKy? HocKy { get; set; }
     }
 }

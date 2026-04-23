@@ -1,18 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BaiTapQLSV.Models
+namespace qlsinhvien.Models
 {
     [Table("LopHocPhan")]
     public class LopHocPhan
     {
+        public LopHocPhan()
+        {
+            DangKyHocs = new HashSet<DangKyHoc>();
+            KetQuaHocTaps = new HashSet<KetQuaHocTap>();
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MaLopHocPhan { get; set; }
 
-        [Required(ErrorMessage = "Tên lớp học phần không được để trống")]
+        [Required]
         [StringLength(100)]
-        public string TenLopHocPhan { get; set; }
+        public string TenLopHocPhan { get; set; } = string.Empty;
 
         [Required]
         public int MaMonHoc { get; set; }
@@ -20,19 +28,28 @@ namespace BaiTapQLSV.Models
         [Required]
         public int MaGiangVien { get; set; }
 
-        [StringLength(20)]
-        public int? MaHocKy { get; set; }
-
-        [ForeignKey("MaHocKy")]
-        public HocKy? HocKy { get; set; }
+        [Required]
+        public int MaHocKy { get; set; }
 
         public int SoLuongToiDa { get; set; } = 50;
 
-        // Navigation
+        public DateTime? ThoiGianBatDau { get; set; }
+
+        public DateTime? ThoiGianKetThuc { get; set; }
+
+        [StringLength(20)]
+        public string TrangThai { get; set; } = "DangMo";
+
         [ForeignKey("MaMonHoc")]
-        public MonHoc? MonHoc { get; set; }
+        public virtual MonHoc? MonHoc { get; set; }
 
         [ForeignKey("MaGiangVien")]
-        public GiangVien? GiangVien { get; set; }
+        public virtual TaiKhoan? GiangVien { get; set; }
+
+        [ForeignKey("MaHocKy")]
+        public virtual HocKy? HocKy { get; set; }
+
+        public virtual ICollection<DangKyHoc> DangKyHocs { get; set; }
+        public virtual ICollection<KetQuaHocTap> KetQuaHocTaps { get; set; }
     }
 }

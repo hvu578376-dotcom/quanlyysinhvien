@@ -1,6 +1,6 @@
 ﻿namespace QuanLyySinhVien.Controllers
 {
-    public class SinhVien
+    public class MaKhoa
     {
     }
 }

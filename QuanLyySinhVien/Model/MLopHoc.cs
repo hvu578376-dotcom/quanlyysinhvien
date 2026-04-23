@@ -2,28 +2,37 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BaiTapQLSV.Models
+namespace qlsinhvien.Models
 {
-    [Table("Lop")]
-    public class Lop
+    [Table("LopHoc")]
+    public class LopHoc
     {
+        public LopHoc()
+        {
+            TaiKhoans = new HashSet<TaiKhoan>();
+            PhanCongGiangDays = new HashSet<PhanCongGiangDay>();
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MaLop { get; set; }
 
-        [Required(ErrorMessage = "Tên lớp không được để trống")]
+        [Required]
         [StringLength(50)]
-        public string TenLop { get; set; }
+        public string TenLop { get; set; } = string.Empty;
 
         [StringLength(50)]
-        
-        public string NienKhoa { get; set; } // Ví dụ: 2022-2026
-        public int? MaKhoa { get; set; }
+        public string? Khoa { get; set; }
 
-        [ForeignKey("MaKhoa")]
-        public Khoa? Khoa { get; set; }
+        [StringLength(50)]
+        public string? NienKhoa { get; set; }
 
-        // Quan hệ 1 lớp - nhiều sinh viên
-        public ICollection<SinhVien>? SinhViens { get; set; }
+        public int? MaNganh { get; set; }
+
+        [ForeignKey("MaNganh")]
+        public virtual NganhHoc? NganhHoc { get; set; }
+
+        public virtual ICollection<TaiKhoan> TaiKhoans { get; set; }
+        public virtual ICollection<PhanCongGiangDay> PhanCongGiangDays { get; set; }
     }
 }

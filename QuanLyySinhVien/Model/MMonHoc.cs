@@ -2,27 +2,32 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BaiTapQLSV.Models
+namespace qlsinhvien.Models
 {
     [Table("MonHoc")]
     public class MonHoc
     {
+        public MonHoc()
+        {
+            LopHocPhans = new HashSet<LopHocPhan>();
+            PhanCongGiangDays = new HashSet<PhanCongGiangDay>();
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MaMonHoc { get; set; }
 
-        [Required(ErrorMessage = "Tên môn học không được để trống")]
+        [Required]
         [StringLength(100)]
-        public string TenMonHoc { get; set; }
+        public string TenMonHoc { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Số tín chỉ không được để trống")]
-        [Range(1, 10, ErrorMessage = "Số tín chỉ phải từ 1 đến 10")]
+        [Required]
         public int SoTinChi { get; set; }
 
-        [StringLength(100)]
+        [StringLength(255)]
         public string? MoTa { get; set; }
 
-        // Quan hệ với bảng Kết quả (nếu có)
-        public ICollection<KetQua>? KetQuas { get; set; }
+        public virtual ICollection<LopHocPhan> LopHocPhans { get; set; }
+        public virtual ICollection<PhanCongGiangDay> PhanCongGiangDays { get; set; }
     }
 }

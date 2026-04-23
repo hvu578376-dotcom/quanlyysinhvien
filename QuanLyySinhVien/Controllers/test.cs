@@ -1,18 +1,24 @@
-﻿using BaiTapQLSV.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using qlsinhvien.Data;
 
-public class TestController : Controller
+public class HomeController : Controller
 {
     private readonly AppDbContext _context;
 
-    public TestController(AppDbContext context)
+    public HomeController(AppDbContext context)
     {
         _context = context;
     }
 
-    public IActionResult Index()
+    public IActionResult TestConnection()
     {
-        var data = _context.SinhViens.ToList();
-        return Content("Kết nối OK: " + data.Count);
+        bool ketNoiDuoc = _context.Database.CanConnect();
+
+        if (ketNoiDuoc)
+        {
+            return Content("Kết nối MySQL thành công");
+        }
+
+        return Content("Kết nối MySQL thất bại");
     }
 }

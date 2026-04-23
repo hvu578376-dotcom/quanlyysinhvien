@@ -1,6 +1,7 @@
 ﻿namespace QuanLyySinhVien.Controllers
 {
-    public class TaiKhoan
+    public class test
     {
+
     }
 }

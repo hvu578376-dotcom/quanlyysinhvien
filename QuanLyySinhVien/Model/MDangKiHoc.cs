@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BaiTapQLSV.Models
+namespace qlsinhvien.Models
 {
     [Table("DangKyHoc")]
     public class DangKyHoc
@@ -15,23 +15,17 @@ namespace BaiTapQLSV.Models
         public int MaSinhVien { get; set; }
 
         [Required]
-        public int MaMonHoc { get; set; }
-
-        [Required]
-        [StringLength(20)]
-        public string HocKy { get; set; } // HK1, HK2
-
-        [Required]
-        [StringLength(20)]
-        public string NamHoc { get; set; } // 2024-2025
+        public int MaLopHocPhan { get; set; }
 
         public DateTime NgayDangKy { get; set; } = DateTime.Now;
 
-        // Navigation
-        [ForeignKey("MaSinhVien")]
-        public SinhVien? SinhVien { get; set; }
+        [StringLength(20)]
+        public string TrangThai { get; set; } = "DangKy";
 
-        [ForeignKey("MaMonHoc")]
-        public MonHoc? MonHoc { get; set; }
+        [ForeignKey("MaSinhVien")]
+        public virtual TaiKhoan? SinhVien { get; set; }
+
+        [ForeignKey("MaLopHocPhan")]
+        public virtual LopHocPhan? LopHocPhan { get; set; }
     }
 }

@@ -1,36 +1,46 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BaiTapQLSV.Models
+namespace qlsinhvien.Models
 {
-    [Table("KetQua")]
-    public class KetQua
+    [Table("KetQuaHocTap")]
+    public class KetQuaHocTap
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MaKetQua { get; set; }
 
         [Required]
-        public int MaSinhVien { get; set; }
+        public int MaTaiKhoan { get; set; }
 
         [Required]
-        public int MaMonHoc { get; set; }
+        public int MaLopHocPhan { get; set; }
 
-        [Required(ErrorMessage = "Điểm không được để trống")]
-        [Range(0, 10, ErrorMessage = "Điểm phải từ 0 đến 10")]
-        public float Diem { get; set; }
+        [Column(TypeName = "decimal(4,2)")]
+        public decimal? DiemChuyenCan { get; set; }
+
+        [Column(TypeName = "decimal(4,2)")]
+        public decimal? DiemGiuaKy { get; set; }
+
+        [Column(TypeName = "decimal(4,2)")]
+        public decimal? DiemCuoiKy { get; set; }
+
+        [Column(TypeName = "decimal(4,2)")]
+        public decimal? DiemQuaTrinh { get; set; }
+
+        [Column(TypeName = "decimal(4,2)")]
+        public decimal? DiemKetThucHocPhan { get; set; }
+
+        [Column(TypeName = "decimal(4,2)")]
+        public decimal? DiemTongKet { get; set; }
 
         [StringLength(20)]
-        public string? HocKy { get; set; } // Ví dụ: HK1, HK2
+        public string? KetQua { get; set; }
 
-        [StringLength(20)]
-        public string? NamHoc { get; set; } // Ví dụ: 2024-2025
+        [ForeignKey("MaTaiKhoan")]
+        public virtual TaiKhoan? TaiKhoan { get; set; }
 
-        // Navigation properties
-        [ForeignKey("MaSinhVien")]
-        public SinhVien? SinhVien { get; set; }
-
-        [ForeignKey("MaMonHoc")]
-        public MonHoc? MonHoc { get; set; }
+        [ForeignKey("MaLopHocPhan")]
+        public virtual LopHocPhan? LopHocPhan { get; set; }
     }
 }
