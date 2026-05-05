@@ -19,6 +19,7 @@ namespace qlsinhvien.Data
         public DbSet<DangKyHoc> DangKyHocs { get; set; }
         public DbSet<KetQuaHocTap> KetQuaHocTaps { get; set; }
         public DbSet<PhanCongGiangDay> PhanCongGiangDays { get; set; }
+        public DbSet<qlsinhvien.Models.PasswordReset> PasswordResets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

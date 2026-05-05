@@ -27,6 +27,21 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav">
+                        @if (User?.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item nav-link">Xin chào @User.Identity.Name</li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Logout">Đăng xuất</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Login">Đăng nhập</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

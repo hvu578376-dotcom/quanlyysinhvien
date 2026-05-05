@@ -1,0 +1,70 @@
+/* Global */
+*{box-sizing:border-box;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
+body{margin:0;background:#f6f9fc;color:#0f1724}
+#app{display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:260px;background:linear-gradient(180deg,#ffffff,#fbfdff);border-right:1px solid #eef3f9;padding:20px}
+.brand{padding:14px;border-radius:10px;background:linear-gradient(135deg,#0ea5e9,#3b82f6);color:#fff;margin-bottom:20px}
+.brand-title{font-weight:800;font-size:20px}
+.brand-sub{font-size:12px;opacity:0.95}
+.menu{margin-top:6px}
+.menu .menu-btn{display:block;width:100%;padding:10px 14px;margin-bottom:10px;border-radius:8px;border:none;background:transparent;text-align:left;font-weight:700;cursor:pointer;color:#0f1724}
+.menu .menu-btn.active{background:#0f1724;color:#fff}
+
+/* Main */
+.main{flex:1;padding:26px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.top-left h1{margin:0;font-size:26px;font-weight:700}
+.subtitle{margin:4px 0 0;color:#475569}
+.top-right{display:flex;align-items:center}
+.user-box{display:flex;align-items:center;gap:12px}
+.user-name{font-weight:700;color:#0f1724}
+.btn-ghost{background:transparent;border:1px solid #e2e8f0;padding:8px 10px;border-radius:8px;cursor:pointer}
+
+/* Dashboard */
+.dashboard{display:flex;gap:18px;flex-wrap:wrap}
+.card{background:#fff;border:1px solid #eef3f9;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.04)}
+.stat{flex:0 0 160px;text-align:center}
+.stat-value{font-size:28px;font-weight:800;color:#0ea5e9}
+.stat-label{color:#475569;margin-top:6px}
+.actions{flex:1}
+.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.action{padding:10px;border-radius:8px;border:1px solid #e6f0fb;background:#f8fbff;cursor:pointer;font-weight:700;color:#0f4fa8}
+
+/* Pages */
+.page{margin-top:8px}
+.hidden{display:none}
+
+/* Simple table */
+.simple-table{width:100%;border-collapse:collapse}
+.simple-table td{padding:10px;border-bottom:1px solid #f1f5f9}
+.simple-table tr:hover td{background:#fbfdff}
+.link-btn{background:#fff;border:1px solid #0ea5e9;color:#0ea5e9;padding:8px 12px;border-radius:8px;cursor:pointer}
+
+/* Data table improvements */
+.data-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #eef3f9;border-radius:10px;overflow:hidden}
+.data-table thead{background:linear-gradient(90deg,#f8fafc,#ffffff)}
+.data-table th{font-weight:700;padding:12px;border-bottom:1px solid #eef3f9;color:#0f1724;text-align:left}
+.data-table td{padding:12px;border-bottom:1px solid #f1f5f9;color:#334155}
+.data-table tr:hover td{background:#fbfdff}
+.data-table td:last-child{width:220px}
+
+/* Responsive */
+@media (max-width:900px){
+  .sidebar{display:none}
+  #app{flex-direction:column}
+  .action-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Modal styles */
+.modal{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000}
+.modal-dialog{width:720px;max-width:100%;background:#fff;padding:18px;border-radius:12px}
+.modal .form-row{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.modal .form-row label{width:140px;font-weight:600;color:#334155}
+.modal .form-row input,.modal .form-row select{flex:1;padding:8px;border:1px solid #e6eef7;border-radius:8px}
+.modal .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.modal.hidden{display:none !important;pointer-events:none !important;visibility:hidden !important}
+
+/* safety: ensure modals don't block clicks when hidden and main content is interactive */
+main.main, .sidebar{position:relative;z-index:0}

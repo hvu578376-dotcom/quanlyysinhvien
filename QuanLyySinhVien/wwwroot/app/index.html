@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuanLySinhVien - Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-title">QuanLySinhVien</div>
+        <div class="brand-sub">Hệ thống quản lý sinh viên</div>
+      </div>
+
+      <nav class="menu">
+          <button data-page="trangChu" class="menu-btn active">Trang Chủ</button>
+          <button data-page="taiKhoan" class="menu-btn">Tài Khoản</button>
+          <button data-page="maKhoa" class="menu-btn">Khoa</button>
+          <button data-page="nganhHoc" class="menu-btn">Ngành học</button>
+          <button data-page="lopHoc" class="menu-btn">Lớp học</button>
+          <button data-page="monHoc" class="menu-btn">Môn học</button>
+          <button data-page="lopHocPhan" class="menu-btn">Lớp học phần</button>
+          <button data-page="dangKyHoc" class="menu-btn">Đăng kí học</button>
+          <button data-page="ketQuaHocTap" class="menu-btn">Kết quả học tập</button>
+          <button data-page="phanCongGiangDay" class="menu-btn">Phân Công Giảng Dạy</button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="top-left">
+          <h1 id="pageTitle">Trang Chủ</h1>
+          <p class="subtitle">Dự án quản lý sinh viên</p>
+        </div>
+        <div id="userArea" class="top-right">
+          <div class="user-box">
+            <div id="userName" class="user-name"></div>
+            <button id="logoutBtn" class="btn-ghost">Đăng xuất</button>
+          </div>
+        </div>
+      </header>
+
+      <section id="content">
+        <div id="trangChu" class="page">
+          <div class="dashboard">
+            <div class="card stat">
+              <div class="stat-value">9</div>
+              <div class="stat-label">Chức năng</div>
+            </div>
+            <div class="card actions">
+              <h4>Bảng điều khiển</h4>
+            <div class="action-grid">
+                <button class="action" data-page="taiKhoan">Tài khoản</button>
+                <button class="action" data-page="maKhoa">Khoa</button>
+                <button class="action" data-page="nganhHoc">Ngành học</button>
+                <button class="action" data-page="lopHoc">Lớp học</button>
+                <button class="action" data-page="monHoc">Môn học</button>
+                <button class="action" data-page="lopHocPhan">Lớp học phần</button>
+                <button class="action" data-page="dangKyHoc">Đăng ký học</button>
+                <button class="action" data-page="ketQuaHocTap">Kết quả học tập</button>
+                <button class="action" data-page="phanCongGiangDay">Phân công giảng dạy</button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="taiKhoan" class="page hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3>Quan Ly Tai Khoan</h3>
+            <div>
+              <button id="createTaiKhoan" class="link-btn">Tạo mới</button>
+            </div>
+          </div>
+          <div id="taiKhoanList">Loading...</div>
+
+          <!-- Modal: TaiKhoan form -->
+          <div id="taiKhoanModal" class="modal hidden">
+            <div class="modal-dialog">
+              <h3 id="modalTitle">Tạo tài khoản</h3>
+              <form id="taiForm">
+                <div class="form-row"><label>Tên đăng nhập</label><input name="TenDangNhap" required /></div>
+                <div class="form-row"><label>Mật khẩu</label><input name="MatKhau" type="password" required /></div>
+                <div class="form-row"><label>Họ tên</label><input name="HoTen" /></div>
+                <div class="form-row"><label>Email</label><input name="Email" type="email" /></div>
+                <div class="form-row"><label>Số điện thoại</label><input name="SoDienThoai" /></div>
+                <div class="form-row"><label>Vai trò</label><input name="VaiTro" /></div>
+                <div class="form-row"><label>Trạng thái</label><select name="TrangThai"><option value="true">Hoạt động</option><option value="false">Khóa</option></select></div>
+                <div class="form-row"><label>Ngày sinh</label><input name="NgaySinh" type="date" /></div>
+                <div class="form-row"><label>Giới tính</label><select name="GioiTinh"><option value="">--</option><option value="true">Nam</option><option value="false">Nữ</option></select></div>
+                <div class="form-row"><label>Lớp</label><select name="MaLop"><option value="">-- Chọn lớp --</option></select></div>
+                <div class="form-row"><label>Chuyên ngành</label><input name="ChuyenNganh" /></div>
+                <div class="form-row"><label>Học vị</label><input name="HocVi" /></div>
+                <div class="form-actions">
+                  <button type="submit" class="link-btn">Lưu</button>
+                  <button type="button" id="cancelTai" class="btn-ghost">Hủy</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="maKhoa" class="page hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3>Quan Ly Khoa</h3>
+            <div>
+              <button id="createMaKhoa" class="link-btn">Tạo mới</button>
+            </div>
+          </div>
+          <div id="maKhoaList">Loading...</div>
+        </div>
+
+        <!-- Modal: MaKhoa form -->
+        <div id="maKhoaModal" class="modal hidden">
+          <div class="modal-dialog">
+            <h3 id="maModalTitle">Tạo Khoa</h3>
+            <form id="maForm">
+              <div class="form-row"><label>Tên khoa</label><input name="TenKhoa" required /></div>
+              <div class="form-row"><label>Mô tả</label><input name="MoTa" /></div>
+              <div class="form-actions">
+                <button type="submit" class="link-btn">Lưu</button>
+                <button type="button" id="cancelMa" class="btn-ghost">Hủy</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="nganhHoc" class="page hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Quan Ly Ngành Học</h3>
+            <div>
+              <button id="createNganhHoc" class="link-btn">Tạo mới</button>
+            </div>
+          </div>
+          <div id="nganhHocList">Loading...</div>
+
+          <!-- Modal: NganhHoc form -->
+          <div id="nganhHocModal" class="modal hidden">
+            <div class="modal-dialog">
+              <h3 id="ngModalTitle">Tạo Ngành học</h3>
+              <form id="ngForm">
+                <div class="form-row"><label>Tên ngành</label><input name="TenNganh" required /></div>
+                <div class="form-row"><label>Khoa</label><select name="MaKhoa"><option value="">-- Chọn khoa --</option></select></div>
+                <div class="form-row"><label>Mô tả</label><input name="MoTa" /></div>
+                <div class="form-actions">
+                  <button type="submit" class="link-btn">Lưu</button>
+                  <button type="button" id="cancelNg" class="btn-ghost">Hủy</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="lopHoc" class="page hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Quan Ly Lớp Học</h3>
+            <div>
+              <button id="createLopHoc" class="link-btn">Tạo mới</button>
+            </div>
+          </div>
+          <div id="lopHocList">Loading...</div>
+
+          <!-- Modal: LopHoc form -->
+          <div id="lopHocModal" class="modal hidden">
+            <div class="modal-dialog">
+              <h3 id="lopModalTitle">Tạo Lớp học</h3>
+              <form id="lopForm">
+                <div class="form-row"><label>Tên lớp</label><input name="TenLop" required /></div>
+                <div class="form-row"><label>Khoa</label><input name="Khoa" /></div>
+                <div class="form-row"><label>Niên khóa</label><input name="NienKhoa" /></div>
+                <div class="form-row"><label>Ngành</label><select name="MaNganh"><option value="">-- Chọn ngành --</option></select></div>
+                <div class="form-actions">
+                  <button type="submit" class="link-btn">Lưu</button>
+                  <button type="button" id="cancelLop" class="btn-ghost">Hủy</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="monHoc" class="page hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Quan Ly Môn Học</h3>
+            <div>
+              <button id="createMonHoc" class="link-btn">Tạo mới</button>
+            </div>
+          </div>
+          <div id="monHocList">Loading...</div>
+
+          <!-- Modal: MonHoc form -->
+          <div id="monHocModal" class="modal hidden">
+            <div class="modal-dialog">
+              <h3 id="monModalTitle">Tạo Môn học</h3>
+              <form id="monForm">
+                <div class="form-row"><label>Tên môn học</label><input name="TenMonHoc" required /></div>
+                <div class="form-row"><label>Số tín chỉ</label><input name="SoTinChi" type="number" required /></div>
+                <div class="form-row"><label>Mô tả</label><input name="MoTa" /></div>
+                <div class="form-actions">
+                  <button type="submit" class="link-btn">Lưu</button>
+                  <button type="button" id="cancelMon" class="btn-ghost">Hủy</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="lopHocPhan" class="page hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Quan Ly Lop Hoc Phan</h3>
+            <div>
+              <button id="createLopHocPhan" class="link-btn">Tạo mới</button>
+            </div>
+          </div>
+          <div id="lopHocPhanList">Loading...</div>
+        </div>
+
+        <div id="dangKyHoc" class="page hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Quan Ly Dang Ky Hoc</h3>
+            <div>
+              <button id="createDangKyHoc" class="link-btn">Tạo mới</button>
+            </div>
+          </div>
+          <div id="dangKyHocList">Loading...</div>
+        </div>
+
+        <div id="ketQuaHocTap" class="page hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Quan Ly Ket Qua Hoc Tap</h3>
+            <div>
+              <button id="createKetQuaHocTap" class="link-btn">Tạo mới</button>
+            </div>
+          </div>
+          <div id="ketQuaHocTapList">Loading...</div>
+        </div>
+
+        <div id="phanCongGiangDay" class="page hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Quan Ly Phan Cong Giang Day</h3>
+            <div>
+              <button id="createPhanCongGiangDay" class="link-btn">Tạo mới</button>
+            </div>
+          </div>
+          <div id="phanCongGiangDayList">Loading...</div>
+        </div>
+
+        <!-- Generic modal for modules without specific forms -->
+        <div id="genericModal" class="modal hidden">
+          <div class="modal-dialog">
+            <h3 id="genericModalTitle">Tạo / Sửa</h3>
+            <form id="genericForm">
+              <div class="form-row" style="flex-direction:column;align-items:stretch;margin-bottom:8px">
+                <label style="width:auto;font-weight:600;color:#334155;margin-bottom:6px">Dữ liệu (có thể chỉnh sửa theo form)</label>
+                <div id="genericFields" style="width:100%;padding:6px 0;border-radius:8px"></div>
+                <textarea name="json" rows="8" style="width:100%;padding:10px;border:1px solid #e6eef7;border-radius:8px;font-family:monospace;display:none;margin-top:8px"></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="link-btn">Lưu</button>
+                <button type="button" id="cancelGeneric" class="btn-ghost">Hủy</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app/app.js"></script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using qlsinhvien.Data;
 using qlsinhvien.Models;
 
@@ -24,7 +25,8 @@ namespace qlsinhvien.Controllers
                 {
                     maTaiKhoan = t.MaTaiKhoan,
                     tenDangNhap = t.TenDangNhap,
-                    matKhau = t.MatKhau,
+                    // Do not expose hashed password
+                    matKhau = "********",
                     vaiTro = t.VaiTro,
                     trangThai = t.TrangThai,
                     email = t.Email,
@@ -45,8 +47,16 @@ namespace qlsinhvien.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] TaiKhoan model)
         {
+            // Hash password before saving
+            var hasher = new PasswordHasher<TaiKhoan>();
+            if (!string.IsNullOrEmpty(model.MatKhau))
+            {
+                model.MatKhau = hasher.HashPassword(model, model.MatKhau);
+            }
             _context.TaiKhoans.Add(model);
             await _context.SaveChangesAsync();
+            // do not return password value
+            model.MatKhau = "";
             return Ok(model);
         }
 
@@ -55,9 +65,13 @@ namespace qlsinhvien.Controllers
         {
             var entity = await _context.TaiKhoans.FindAsync(id);
             if (entity == null) return NotFound();
-
             entity.TenDangNhap = model.TenDangNhap;
-            entity.MatKhau = model.MatKhau;
+            // If password provided, hash it. If empty or null, keep existing password.
+            if (!string.IsNullOrWhiteSpace(model.MatKhau))
+            {
+                var hasher = new PasswordHasher<TaiKhoan>();
+                entity.MatKhau = hasher.HashPassword(entity, model.MatKhau);
+            }
             entity.VaiTro = model.VaiTro;
             entity.TrangThai = model.TrangThai;
             entity.Email = model.Email;
