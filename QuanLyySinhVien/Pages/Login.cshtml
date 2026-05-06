@@ -27,8 +27,8 @@
                     <form method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="mb-3">
-                            <label for="Username" class="form-label">Tài khoản</label>
-                            <input asp-for="Username" class="form-control" id="Username" />
+                            <label for="Username" class="form-label">Tài khoản hoặc Email</label>
+                            <input asp-for="Username" class="form-control" id="Username" placeholder="Nhập tên đăng nhập hoặc email" />
                             <span asp-validation-for="Username" class="text-danger"></span>
                         </div>
                         <div class="mb-3">

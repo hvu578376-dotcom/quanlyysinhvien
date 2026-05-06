@@ -68,6 +68,37 @@
     phanCongGiangDay: '/api/PhanCongGiangDayApi'
   };
 
+  // Friendly column labels per module
+  const columnLabelsMap = {
+    taiKhoan: {
+      maTaiKhoan: 'Mã tài khoản', hoTen: 'Họ tên', vaiTro: 'Vai trò', trangThai: 'Trạng thái', email: 'Email', soDienThoai: 'Số điện thoại', ngaySinh: 'Ngày sinh'
+    },
+    maKhoa: {
+      maKhoa: 'Mã Khoa', tenKhoa: 'Tên khoa', moTa: 'Mô tả'
+    },
+    nganhHoc: {
+      maNganh: 'Mã ngành', tenNganh: 'Tên ngành', maKhoa: 'Mã khoa', moTa: 'Mô tả'
+    },
+    lopHoc: {
+      maLop: 'Mã lớp', tenLop: 'Tên lớp', khoa: 'Khoa', nienKhoa: 'Niên khóa', maNganh: 'Mã ngành'
+    },
+    monHoc: {
+      maMonHoc: 'Mã môn', tenMonHoc: 'Tên môn', soTinChi: 'Số tín chỉ', moTa: 'Mô tả'
+    },
+    lopHocPhan: {
+      maLopHocPhan: 'Mã LHP', tenLopHocPhan: 'Tên LHP', maMonHoc: 'Mã môn', maGiangVien: 'Mã giảng viên', maHocKy: 'Mã học kỳ', soTinChi: 'Số tín chỉ', soLuongToiDa: 'Sức chứa', soLuongSinhVien: 'Số SV', trangThai: 'Trạng thái'
+    },
+    dangKyHoc: {
+      maDangKy: 'Mã đăng ký', maSinhVien: 'Mã sinh viên', maLopHocPhan: 'Mã LHP', trangThai: 'Trạng thái'
+    },
+    ketQuaHocTap: {
+      maKetQua: 'Mã kết quả', maTaiKhoan: 'Mã sinh viên', tenSinhVien: 'Tên sinh viên', maLopHocPhan: 'Mã LHP', tenLopHocPhan: 'Lớp học phần', diemTongKet: 'Điểm tổng kết', ketQua: 'Kết quả'
+    },
+    phanCongGiangDay: {
+      maPhanCong: 'Mã phân công', maGiangVien: 'Mã giảng viên', maMonHoc: 'Mã môn', maLop: 'Mã lớp', maHocKy: 'Mã học kỳ'
+    }
+  };
+
   function getId(item){
     for(const k of Object.keys(item)){
       if(/^ma/i.test(k)) return item[k];
@@ -98,11 +129,25 @@
         const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
         // determine columns from first object
-        const cols = Object.keys(data[0]).filter(k=> typeof data[0][k] !== 'object');
+        let cols = Object.keys(data[0]).filter(k=> typeof data[0][k] !== 'object');
+        // For taiKhoan page only show selected columns in specific order
+        if(key === 'taiKhoan'){
+          const desired = ['maTaiKhoan','hoTen','vaiTro','trangThai','email','soDienThoai','ngaySinh'];
+          // only include columns that actually exist in the data
+          cols = desired.filter(c => Object.prototype.hasOwnProperty.call(data[0], c));
+        }
+
+        // For nganhHoc hide maKhoa column (we show only user-facing fields)
+        if(key === 'nganhHoc'){
+          cols = cols.filter(c => c !== 'maKhoa');
+        }
+
+        // Friendly column labels for this module
+        const columnLabels = columnLabelsMap[key] || {};
         const trHead = document.createElement('tr');
         cols.forEach(c=>{
           const th = document.createElement('th');
-          th.textContent = c;
+          th.textContent = (columnLabels && columnLabels[c]) ? columnLabels[c] : c;
           th.style.textAlign = 'left';
           th.style.padding = '10px';
           th.style.borderBottom = '1px solid #f1f5f9';
@@ -117,9 +162,58 @@
           cols.forEach(c=>{
             const td = document.createElement('td');
             let v = item[c];
-            if(v === null || typeof v === 'undefined') v = '';
-            else if(typeof v === 'object') v = JSON.stringify(v);
-            td.textContent = String(v);
+            let display = '';
+
+            if (v === null || typeof v === 'undefined') {
+              display = '';
+            } else if (typeof v === 'boolean') {
+              // format booleans
+              if (c === 'trangThai') display = v ? 'Hoạt động' : 'Khóa';
+              else if (/gioi/i.test(c)) display = v ? 'Nam' : 'Nữ';
+              else display = v ? 'Có' : 'Không';
+            } else if (typeof v === 'number') {
+              display = String(v);
+            } else if (typeof v === 'string') {
+              // handle string boolean values
+              if (v === 'true' || v === 'false') {
+                const bv = v === 'true';
+                if (c === 'trangThai') display = bv ? 'Hoạt động' : 'Khóa';
+                else if (/gioi/i.test(c)) display = bv ? 'Nam' : 'Nữ';
+                else display = bv ? 'Có' : 'Không';
+              } else {
+                // detect ISO date-like strings and format dd/MM/yyyy
+                const isoDate = /^\d{4}-\d{2}-\d{2}T/.test(v) || /^\d{4}-\d{2}-\d{2}$/.test(v);
+                if (isoDate) {
+                  const d = new Date(v);
+                  if (!isNaN(d)) {
+                    const dd = ('0' + d.getDate()).slice(-2);
+                    const mm = ('0' + (d.getMonth() + 1)).slice(-2);
+                    const yyyy = d.getFullYear();
+                    display = `${dd}/${mm}/${yyyy}`;
+                  } else display = v;
+                } else {
+                  display = v;
+                }
+              }
+            } else if (typeof v === 'object') {
+              display = JSON.stringify(v);
+            } else {
+              display = String(v);
+            }
+
+            // If this is a phone column, render as tel: link so clicking opens dialer
+            if(/soDienThoai/i.test(c) && display){
+              const a = document.createElement('a');
+              // sanitize phone number (keep digits and plus)
+              const raw = String(item[c] || display);
+              const cleaned = raw.replace(/[^0-9+]/g, '');
+              a.href = 'tel:' + cleaned;
+              a.textContent = display;
+              a.className = 'phone-link';
+              td.appendChild(a);
+            } else {
+              td.textContent = display;
+            }
             td.style.padding = '10px';
             td.style.borderBottom = '1px solid #f1f5f9';
             tr.appendChild(td);
@@ -204,7 +298,8 @@
         // fill values from data
         taiEditingId = getId(data);
         form.elements['TenDangNhap'].value = data.tenDangNhap || data.TenDangNhap || '';
-        form.elements['MatKhau'].value = data.matKhau || data.MatKhau || '';
+        // Do NOT populate password field when editing — leave empty to keep existing password
+        form.elements['MatKhau'].value = '';
         form.elements['HoTen'].value = data.hoTen || data.HoTen || '';
         form.elements['Email'].value = data.email || data.Email || '';
         form.elements['SoDienThoai'].value = data.soDienThoai || data.SoDienThoai || '';
@@ -242,6 +337,11 @@
       ChuyenNganh: f.elements['ChuyenNganh'].value,
       HocVi: f.elements['HocVi'].value
     };
+
+    // validate password length only when provided (create or when user set new password)
+    if(payload.MatKhau && payload.MatKhau.length > 0 && payload.MatKhau.length < 8){
+      return alert('Mật khẩu phải có ít nhất 8 ký tự.');
+    }
 
     const method = taiEditingId ? 'PUT' : 'POST';
     const url = taiEditingId ? (routes.taiKhoan + '/' + taiEditingId) : routes.taiKhoan;
@@ -451,35 +551,80 @@
     container.innerHTML = '';
     ta.style.display = 'none';
 
-    function buildFieldsFrom(obj){
+    async function buildFieldsFrom(obj){
       container.innerHTML = '';
-      Object.keys(obj).forEach(k=>{
+      const lookupMap = {
+        maMonHoc: { api: routes.monHoc, valueKey: 'maMonHoc', label: (x)=> x.tenMonHoc || x.TenMonHoc || x.ten || x.maMonHoc },
+        maGiangVien: { api: routes.taiKhoan, valueKey: 'maTaiKhoan', label: (x)=> (x.hoTen || x.HoTen || x.TenDangNhap)+' ('+(x.vaiTro||x.VaiTro||'')+')' },
+        maHocKy: { api: routes.hocKy, valueKey: 'maHocKy', label: (x)=> (x.tenHocKy || x.TenHocKy) + ' ' + (x.namHoc || x.NamHoc || '') },
+        maLop: { api: routes.lopHoc, valueKey: 'maLop', label: (x)=> x.tenLop || x.TenLop || x.tenLop || x.maLop },
+        maLopHocPhan: { api: routes.lopHocPhan, valueKey: 'maLopHocPhan', label: (x)=> x.tenLopHocPhan || x.TenLopHocPhan || ('LHP '+(x.maLopHocPhan||'')) },
+        maSinhVien: { api: routes.taiKhoan, valueKey: 'maTaiKhoan', label: (x)=> x.hoTen || x.HoTen || x.TenDangNhap },
+        maTaiKhoan: { api: routes.taiKhoan, valueKey: 'maTaiKhoan', label: (x)=> x.hoTen || x.HoTen || x.TenDangNhap }
+      };
+
+      for(const k of Object.keys(obj)){
         const v = obj[k];
-        // skip complex objects/arrays
-        if(typeof v === 'object' && v !== null) return;
+        if(typeof v === 'object' && v !== null) continue; // skip complex
         const row = document.createElement('div'); row.className = 'form-row';
         const lbl = document.createElement('label'); lbl.textContent = k; lbl.style.width='140px'; lbl.style.fontWeight='600'; lbl.style.color='#334155';
-        let input;
-        if(typeof v === 'boolean'){
-          input = document.createElement('select');
-          const o1 = document.createElement('option'); o1.value='true'; o1.textContent='true';
-          const o2 = document.createElement('option'); o2.value='false'; o2.textContent='false';
-          input.appendChild(o1); input.appendChild(o2);
-          input.value = v ? 'true' : 'false';
-        } else if(typeof v === 'number'){
-          input = document.createElement('input'); input.type = 'number'; input.value = v;
+
+        // detect if this key should be a lookup select
+        const lk = lookupMap[k] || lookupMap[k.charAt(0).toLowerCase() + k.slice(1)];
+        if(lk){
+          const sel = document.createElement('select');
+          sel.name = k;
+          sel.style.flex='1'; sel.style.padding='8px'; sel.style.border='1px solid #e6eef7'; sel.style.borderRadius='8px';
+          const opt = document.createElement('option'); opt.value = ''; opt.textContent = '-- Chọn --'; sel.appendChild(opt);
+          row.appendChild(lbl); row.appendChild(sel);
+          container.appendChild(row);
+          // fetch options
+          try{
+            const res = await fetch(lk.api, { credentials:'include' });
+            if(res.ok){
+              const list = await res.json();
+              list.forEach(x=>{
+                const o = document.createElement('option');
+                o.value = x[lk.valueKey] || x[lk.valueKey.toLowerCase()] || x[Object.keys(x)[0]];
+                o.textContent = lk.label(x);
+                sel.appendChild(o);
+              });
+              // set value if provided
+              if(mode === 'edit' && typeof v !== 'undefined' && v !== null){ sel.value = v; }
+            } else {
+              // fallback to text input
+              const input = document.createElement('input'); input.type='text'; input.name=k; input.value = v || '';
+              input.style.flex='1'; input.style.padding='8px'; input.style.border='1px solid #e6eef7'; input.style.borderRadius='8px';
+              row.removeChild(sel); row.appendChild(input);
+            }
+          }catch(e){
+            const input = document.createElement('input'); input.type='text'; input.name=k; input.value = v || '';
+            input.style.flex='1'; input.style.padding='8px'; input.style.border='1px solid #e6eef7'; input.style.borderRadius='8px';
+            row.removeChild(sel); row.appendChild(input);
+          }
         } else {
-          // detect date-like keys or values
-          const isDateKey = /ngay|date|nam|thoigian|time/i.test(k);
-          const isIsoDate = typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v);
-          if(isDateKey || isIsoDate){ input = document.createElement('input'); input.type='date'; if(v) input.value = isIsoDate ? (new Date(v)).toISOString().slice(0,10) : v; }
-          else { input = document.createElement('input'); input.type='text'; input.value = v==null?'':v; }
+          // normal input types
+          let input;
+          if(typeof v === 'boolean'){
+            input = document.createElement('select');
+            const o1 = document.createElement('option'); o1.value='true'; o1.textContent='true';
+            const o2 = document.createElement('option'); o2.value='false'; o2.textContent='false';
+            input.appendChild(o1); input.appendChild(o2);
+            input.value = v ? 'true' : 'false';
+          } else if(typeof v === 'number'){
+            input = document.createElement('input'); input.type = 'number'; input.value = v;
+          } else {
+            const isDateKey = /ngay|date|nam|thoigian|time/i.test(k);
+            const isIsoDate = typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v);
+            if(isDateKey || isIsoDate){ input = document.createElement('input'); input.type='date'; if(v) input.value = isIsoDate ? (new Date(v)).toISOString().slice(0,10) : v; }
+            else { input = document.createElement('input'); input.type='text'; input.value = v==null?'':v; }
+          }
+          input.name = k;
+          input.style.flex='1'; input.style.padding='8px'; input.style.border='1px solid #e6eef7'; input.style.borderRadius='8px';
+          row.appendChild(lbl); row.appendChild(input);
+          container.appendChild(row);
         }
-        input.name = k;
-        input.style.flex='1'; input.style.padding='8px'; input.style.border='1px solid #e6eef7'; input.style.borderRadius='8px';
-        row.appendChild(lbl); row.appendChild(input);
-        container.appendChild(row);
-      });
+      }
     }
 
     if(mode === 'edit' && data){

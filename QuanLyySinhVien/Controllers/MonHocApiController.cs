@@ -24,7 +24,8 @@ namespace qlsinhvien.Controllers
                 {
                     maMonHoc = x.MaMonHoc,
                     tenMonHoc = x.TenMonHoc,
-                    moTa = x.MoTa
+                    moTa = x.MoTa,
+                    soTinChi = x.SoTinChi
                 })
                 .ToListAsync();
 
@@ -47,6 +48,8 @@ namespace qlsinhvien.Controllers
 
             entity.TenMonHoc = model.TenMonHoc;
             entity.MoTa = model.MoTa;
+            // ensure credit value is updated
+            entity.SoTinChi = model.SoTinChi;
 
             await _context.SaveChangesAsync();
             return Ok(entity);

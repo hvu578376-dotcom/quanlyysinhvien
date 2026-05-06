@@ -23,12 +23,16 @@ namespace qlsinhvien.Controllers
                 .Include(x => x.MonHoc)
                 .Include(x => x.GiangVien)
                 .Include(x => x.HocKy)
+                .Include(x => x.DangKyHocs)
+                    .ThenInclude(d => d.SinhVien)
                 .Select(x => new
                 {
                     maLopHocPhan = x.MaLopHocPhan,
                     tenLopHocPhan = x.TenLopHocPhan,
                     maMonHoc = x.MaMonHoc,
                     tenMonHoc = x.MonHoc != null ? x.MonHoc.TenMonHoc : null,
+                    // thêm cột số tín chỉ của môn học
+                    soTinChi = x.MonHoc != null ? x.MonHoc.SoTinChi : (int?)null,
                     maGiangVien = x.MaGiangVien,
                     tenGiangVien = x.GiangVien != null ? x.GiangVien.HoTen : null,
                     maHocKy = x.MaHocKy,
@@ -37,7 +41,16 @@ namespace qlsinhvien.Controllers
                     soLuongToiDa = x.SoLuongToiDa,
                     thoiGianBatDau = x.ThoiGianBatDau,
                     thoiGianKetThuc = x.ThoiGianKetThuc,
-                    trangThai = x.TrangThai
+                    trangThai = x.TrangThai,
+                    // thêm thông tin sinh viên: số lượng và danh sách cơ bản (id + tên)
+                    soLuongSinhVien = x.DangKyHocs.Count(),
+                    danhSachSinhVien = x.DangKyHocs.Select(d => new
+                    {
+                        maSinhVien = d.MaSinhVien,
+                        tenSinhVien = d.SinhVien != null ? d.SinhVien.HoTen : null,
+                        ngayDangKy = d.NgayDangKy,
+                        trangThaiDangKy = d.TrangThai
+                    })
                 })
                 .ToListAsync();
 
@@ -47,8 +60,18 @@ namespace qlsinhvien.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] LopHocPhan model)
         {
+            // Ensure primary key is not set by client to avoid duplicate primary key errors
+            model.MaLopHocPhan = 0;
             _context.LopHocPhans.Add(model);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                // return friendly error when insert fails (e.g., duplicate key)
+                return BadRequest(new { error = "Không thể tạo lớp học phần: " + ex.InnerException?.Message ?? ex.Message });
+            }
             return Ok(model);
         }
 

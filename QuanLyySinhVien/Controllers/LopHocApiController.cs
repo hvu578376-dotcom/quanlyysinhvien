@@ -26,7 +26,9 @@ namespace qlsinhvien.Controllers
                     tenLop = x.TenLop,
                     khoa = x.Khoa,
                     nienKhoa = x.NienKhoa,
-                    maNganh = x.MaNganh
+                    maNganh = x.MaNganh,
+                    // số sinh viên của lớp (dựa trên navigation TaiKhoans)
+                    soLuongSinhVien = x.TaiKhoans.Count()
                 })
                 .ToListAsync();
 

@@ -54,9 +54,9 @@ namespace QuanLyySinhVien.Pages
                 return Page();
             }
 
-            if (string.IsNullOrWhiteSpace(NewPassword) || NewPassword.Length < 4)
+            if (string.IsNullOrWhiteSpace(NewPassword) || NewPassword.Length < 8)
             {
-                ErrorMessage = "Mật khẩu phải ít nhất 4 ký tự.";
+                ErrorMessage = "Mật khẩu phải ít nhất 8 ký tự.";
                 ValidToken = true;
                 return Page();
             }

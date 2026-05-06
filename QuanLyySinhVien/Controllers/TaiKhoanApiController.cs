@@ -47,12 +47,15 @@ namespace qlsinhvien.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] TaiKhoan model)
         {
+            // Validate password length
+            if (string.IsNullOrWhiteSpace(model.MatKhau) || model.MatKhau.Length < 8)
+            {
+                return BadRequest("Mật khẩu phải có ít nhất 8 ký tự.");
+            }
+
             // Hash password before saving
             var hasher = new PasswordHasher<TaiKhoan>();
-            if (!string.IsNullOrEmpty(model.MatKhau))
-            {
-                model.MatKhau = hasher.HashPassword(model, model.MatKhau);
-            }
+            model.MatKhau = hasher.HashPassword(model, model.MatKhau);
             _context.TaiKhoans.Add(model);
             await _context.SaveChangesAsync();
             // do not return password value
@@ -66,9 +69,13 @@ namespace qlsinhvien.Controllers
             var entity = await _context.TaiKhoans.FindAsync(id);
             if (entity == null) return NotFound();
             entity.TenDangNhap = model.TenDangNhap;
-            // If password provided, hash it. If empty or null, keep existing password.
+            // If password provided, validate and hash it. If empty or null, keep existing password.
             if (!string.IsNullOrWhiteSpace(model.MatKhau))
             {
+                if (model.MatKhau.Length < 8)
+                {
+                    return BadRequest("Mật khẩu phải có ít nhất 8 ký tự.");
+                }
                 var hasher = new PasswordHasher<TaiKhoan>();
                 entity.MatKhau = hasher.HashPassword(entity, model.MatKhau);
             }

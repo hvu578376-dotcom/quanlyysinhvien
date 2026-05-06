@@ -48,8 +48,8 @@ namespace QuanLyySinhVien.Pages
                 return Page();
             }
 
-            // Lấy tài khoản từ DB và kiểm tra mật khẩu đã hash
-            var user = await _context.TaiKhoans.FirstOrDefaultAsync(t => t.TenDangNhap == Username && t.TrangThai == true);
+            // Lấy tài khoản từ DB theo tên đăng nhập hoặc email và kiểm tra mật khẩu đã hash
+            var user = await _context.TaiKhoans.FirstOrDefaultAsync(t => (t.TenDangNhap == Username || t.Email == Username) && t.TrangThai == true);
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Tài khoản hoặc mật khẩu không đúng.");
